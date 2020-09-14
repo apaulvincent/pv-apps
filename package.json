@@ -10,6 +10,7 @@
     "export": "next export -o build"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "moment": "^2.27.0",
     "next": "9.5.3",
