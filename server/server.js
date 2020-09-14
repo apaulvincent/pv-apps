@@ -1,7 +1,24 @@
 const server = require('express')();
-const cors = require('cors')
 
-server.use(cors())
+// const cors = require('cors')
+// server.use(cors())
+
+server.use(function(req, res, next) {
+
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+ // Add this
+ if (req.method === 'OPTIONS') {
+
+      res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, OPTIONS');
+      res.header('Access-Control-Max-Age', 120);
+      return res.status(200).json({});
+  }
+
+  next();
+
+});
 
 const http = require("http").createServer(server);
 const io = require("socket.io")(http);
@@ -12,6 +29,7 @@ const ioport = process.env.IO_PORT || 9000
 
 let activeRooms = []
 let activeUsers = {}
+
 
 io.on('connection', (socket) => {
 
