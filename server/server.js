@@ -7,7 +7,7 @@ const http = require("http").createServer(server);
 
 const io = require("socket.io")();
 
-// io.set('origins', 'https://pv-apps.netlify.app/:*');
+io.set('origins', ['pv-apps.netlify.app/:*']);
 
 const dev = process.env.NODE_ENV !== 'production'
 
