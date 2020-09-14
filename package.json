@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "io": "nodemon server/index.js",
-    "start": "next start"
+    "start": "next start",
+    "export": "next export -o build"
   },
   "dependencies": {
     "express": "^4.17.1",
