@@ -176,7 +176,7 @@ export async function getStaticPaths() {
     paths: [
       { params: { room: '8353d2bb-7e0c-4323-8bbf-812500a69567' } }
     ],
-    fallback: true,
+    fallback: false,
   }
 
 }
