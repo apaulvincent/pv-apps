@@ -8,8 +8,8 @@ import { useRouter } from 'next/router'
 
 import AddUser from '../../components/AddUser'
 
-const ioport = process.env.IO_PORT || 9000
-const path = process.env.NODE_ENV !== 'production' ? `http://localhost:${ioport}` : "https://pv-poker.herokuapp.com/"
+const ioport = process.env.PORT || 9000
+const path = process.env.NODE_ENV !== 'production' ? `http://localhost:${ioport}` : "https://pv-poker.herokuapp.com"
 const socket = io(path);
 
 export default function Room() {

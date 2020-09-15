@@ -3,28 +3,28 @@ const server = require('express')();
 const cors = require('cors')
 server.use(cors())
 
-const corsfn = (req, res) => {
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Request-Method', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
-    res.setHeader('Access-Control-Allow-Headers', '*');
-    if ( req.method === 'OPTIONS' ) {
-      res.writeHead(200);
-      res.end();
-      return;
-    }
-}
+// const corsfn = (req, res) => {
+//     // Set CORS headers
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//     res.setHeader('Access-Control-Request-Method', '*');
+//     res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+//     res.setHeader('Access-Control-Allow-Headers', '*');
+//     if ( req.method === 'OPTIONS' ) {
+//       res.writeHead(200);
+//       res.end();
+//       return;
+//     }
+// }
 
-const http = require("http").createServer(corsfn); // corsfn
+const http = require("http").createServer(server); // corsfn
 
-const io = require("socket.io")(http);
+const io = require("socket.io")();
 
 io.origins(['pv-apps.netlify.app:*']);
 
 const dev = process.env.NODE_ENV !== 'production'
 
-const ioport = process.env.IO_PORT || 9000
+const ioport = process.env.PORT || 9000
 
 let activeRooms = []
 let activeUsers = {}
@@ -97,6 +97,6 @@ io.on('connection', (socket) => {
 });
 
 
-http.listen(ioport, function() {
+io.listen(ioport, function() {
   console.log(`IO listening on port ${ioport}`)
 })
