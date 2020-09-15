@@ -3,24 +3,20 @@ const server = require('express')();
 const cors = require('cors')
 server.use(cors())
 
-server.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+const corsfn = (req, res) => {
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Request-Method', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if ( req.method === 'OPTIONS' ) {
+      res.writeHead(200);
+      res.end();
+      return;
+    }
+}
 
- // Add this
- if (req.method === 'OPTIONS') {
-
-      res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, OPTIONS');
-      res.header('Access-Control-Max-Age', 120);
-      return res.status(200).json({});
-  }
-
-  next();
-
-});
-
-
-const http = require("http").createServer(server);
+const http = require("http").createServer(server); // corsfn
 
 const io = require("socket.io")(http);
 
@@ -101,4 +97,6 @@ io.on('connection', (socket) => {
 });
 
 
-http.listen(ioport)
+http.listen(ioport, function() {
+  console.log(`IO listening on port ${ioport}`)
+})
