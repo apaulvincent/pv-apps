@@ -16,7 +16,7 @@ const corsfn = (req, res) => {
     }
 }
 
-const http = require("http").createServer(server); // corsfn
+const http = require("http").createServer(corsfn); // corsfn
 
 const io = require("socket.io")(http);
 
