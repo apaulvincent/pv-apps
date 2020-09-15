@@ -11,7 +11,7 @@ const io = require("socket.io")(http);
 
 const dev = process.env.NODE_ENV !== 'production'
 
-const ioport = process.env.PORT || 9000
+const port = process.env.PORT || 9000
 
 let activeRooms = []
 let activeUsers = {}
@@ -84,6 +84,6 @@ io.on('connection', (socket) => {
 });
 
 
-http.listen(ioport, function() {
-  console.log(`IO listening on port ${ioport}`)
+http.listen(port, function() {
+  console.log(`IO listening on port ${port}`)
 })
