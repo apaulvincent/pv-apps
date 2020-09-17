@@ -21,15 +21,15 @@ export default function Poker({isBrowser}) {
         "room": null
     } 
 
-    if(isBrowser){
-        userInCookie = getCookie('pv-poker-user')
-        if(userInCookie){
-            userInCookie = JSON.parse(userInCookie)
-        }
-    }
+    // if(isBrowser){
+    //     userInCookie = getCookie('pv-poker-user')
+    //     if(userInCookie){
+    //         userInCookie = JSON.parse(userInCookie)
+    //     }
+    // }
     
-    const [username, setUsername] = useState(userInCookie.name);
-    const [user, setUser] = useState(userInCookie);
+    const [username, setUsername] = useState(null);
+    const [user, setUser] = useState(null);
 
     const [users, setUsers] = useState([]);
     const [rooms, setRooms] = useState([]);
