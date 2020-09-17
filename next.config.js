@@ -1,7 +1,8 @@
 module.exports = (phase, { defaultConfig }) => {
     return {
         env: {
-            // IO_PORT: process.env.IO_PORT || 9000
+            PORT: process.env.PORT || 9000,
+            IOPATH: process.env.NODE_ENV !== 'production' ? `http://localhost:${process.env.PORT}` : "https://pv-poker.herokuapp.com"
         },
     }
 }

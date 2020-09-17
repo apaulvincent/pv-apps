@@ -1,5 +1,4 @@
 const server = require('express')();
-
 const cors = require('cors')
 server.use(cors())
 
@@ -11,6 +10,10 @@ const io = require("socket.io")(http);
 
 const dev = process.env.NODE_ENV !== 'production'
 
+if (dev) {
+  require('dotenv').config();
+}
+
 const port = process.env.PORT || 9000
 
 let activeRooms = []
@@ -20,8 +23,12 @@ io.on('connection', (socket) => {
 
       console.log('a user connected');
 
-      // Set User
-      socket.on("username", data => {
+      // Show rooms so user can select them
+      io.emit("show-rooms", activeRooms);
+
+
+      // Create Room
+      socket.on("create-room", data => {
 
           const user = {
             "name": data.username,
@@ -48,29 +55,81 @@ io.on('connection', (socket) => {
           })
 
           io.to(data.room).emit("users", selectedUsers);
-          io.emit("rooms", activeRooms);
+          io.emit("show-rooms", activeRooms);
 
       });
 
 
+      // Join Room
+      socket.on("join-room", data => {
+
+          const user = {
+            "name": data.username,
+            "id": socket.id,
+            "room": data.room
+          };
+
+          activeUsers[socket.id] = user;
+          
+          if(!activeRooms.includes(data.room)){
+            activeRooms.push(data.room)
+          }
+          
+          socket.join(data.room);
+
+          io.to(data.room).emit("connected", user);
+
+          let selectedUsers = [] 
+
+          Object.keys(activeUsers).filter(key => {
+            if(activeUsers[key].room == data.room) {
+              selectedUsers.push(activeUsers[key])
+            }
+          })
+
+          io.to(data.room).emit("users", selectedUsers);
+          io.emit("show-rooms", activeRooms);
+
+      });
 
 
       // Messaging
       socket.on("send", message => {
 
-        io.emit("message", {
-          text: message,
-          date: new Date().toISOString(),
-          user: activeUsers[socket.id]
-        });
+        const user = activeUsers[socket.id]
+
+        if(user.room) {
+            io.to(user.room).emit("message", {
+              text: message,
+              date: new Date().toISOString(),
+              user: user
+            });
+        }
 
       });
 
 
+      // Laeve
+      socket.on('leave', (room) => {
+
+        try {
+
+          socket.leave(room);
+          socket.to(room).emit('disconnect');
+
+        } catch(e) {
+
+          console.log('[error]','leave room :', e);
+          socket.emit('error','couldnt perform requested action');
+
+        }
+
+      });
+
 
       // Disconnection
       socket.on('disconnect', () => {
-
+        
         const user = activeUsers[socket.id];
 
         if(user){

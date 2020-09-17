@@ -79,8 +79,6 @@ export default function Room() {
       
   };
 
-
-
   return (
     <div className={styles.container}>
       <Head>
@@ -155,28 +153,4 @@ export default function Room() {
 
     </div>
   )
-}
-
-
-
-export async function getStaticProps(context) {
-
-  return {
-    props: {
-      room: context.params.room,
-    }
-  }
-
-}
-
-
-export async function getStaticPaths() {
-
-  return {
-    paths: [
-      { params: { room: '8353d2bb-7e0c-4323-8bbf-812500a69567' } }
-    ],
-    fallback: false,
-  }
-
 }
