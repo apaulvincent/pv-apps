@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import styles from '../styles/Poker.module.scss'
+import styles from '../../styles/Poker.module.scss'
 
 import { useRouter } from 'next/router'
 
@@ -12,20 +12,19 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>PV Apps</title>
+        <title>PV Apps | I'm Good</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
+      <main className={styles.main}>
         
-        <h1>
-          Welcome
+        <h1 className={styles.title}>
+          Welcome to I'm Good
         </h1>
 
         <br/>
 
         <Link href="/poker">Poker</Link>
-        <Link href="/im-good">I'm Good</Link>
     
       </main>
 
@@ -34,6 +33,7 @@ export default function Home() {
           <strong>PV-APPS</strong>
           </span>
       </footer>
+
 
     </div>
   )

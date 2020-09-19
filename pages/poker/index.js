@@ -2,34 +2,35 @@ import { useState, useEffect } from 'react'
 import io from 'socket.io-client'
 
 import Head from 'next/head'
-import styles from '../../styles/Home.module.scss'
+import styles from '../../styles/Poker.module.scss'
 import Link from 'next/link'
 
-import {getCookie, setCookie, deleteCookie} from '../../utils/cookie'
+import { parseCookies, setCookie, destroyCookie } from 'nookies'
 
-import AddUser from '../../components/AddUser'
+import styled from 'styled-components'
+
+import AddUser from './AddUser'
+import WelcomeUser from './WelcomeUser'
+import PokerRoom from './PokerRoom'
 
 import { v4 as uuidv4 } from 'uuid';
 
 const socket = io(process.env.IOPATH);
 
-export default function Poker({isBrowser}) {
+export default function Poker() {
 
-    let userInCookie = {
-        "name": null,
-        "id": null,
-        "room": null
-    } 
+    let userCookie = parseCookies()
+    let defaultUsername = 'null'
 
-    // if(isBrowser){
-    //     userInCookie = getCookie('pv-poker-user')
-    //     if(userInCookie){
-    //         userInCookie = JSON.parse(userInCookie)
-    //     }
-    // }
-    
-    const [username, setUsername] = useState(null);
-    const [user, setUser] = useState(null);
+    if(userCookie['pv-poker-user']){
+        userCookie = JSON.parse(userCookie['pv-poker-user'])
+        defaultUsername = userCookie.name
+    } else {
+        userCookie = null
+    }
+
+    const [username, setUsername] = useState(defaultUsername);
+    const [user, setUser] = useState(userCookie);
 
     const [users, setUsers] = useState([]);
     const [rooms, setRooms] = useState([]);
@@ -38,15 +39,17 @@ export default function Poker({isBrowser}) {
 
     useEffect(() => {
 
+        if(userCookie){
+            joinRoom(userCookie.room)
+        }
+
         socket.on("connect", () => {
             // Do somthing on connect
         });
 
         socket.on("connected", user => { 
 
-            if(isBrowser){
-                setCookie('pv-poker-user', JSON.stringify(user))
-            }
+            setCookie(null, 'pv-poker-user', JSON.stringify(user))
 
             setUser(user);
 
@@ -57,10 +60,6 @@ export default function Poker({isBrowser}) {
         });
 
         socket.on("show-rooms", rooms => {
-            setRooms(rooms);
-        });
-
-        socket.on("rooms", rooms => {
             setRooms(rooms);
         });
 
@@ -77,10 +76,8 @@ export default function Poker({isBrowser}) {
 
     }, []);
 
-    const submit = e => {
-        e.preventDefault();
-        socket.emit("send", message);
-        setMessage("");
+    const onMessage = (msg) => {
+        socket.emit("send", msg);
     };
   
     const addUser = (user) => {
@@ -101,7 +98,7 @@ export default function Poker({isBrowser}) {
 
     }
 
-    const onJoinRoom = (room) => (e) => {
+    const joinRoom = (room) => {
 
         let data = {
             username: username,
@@ -109,6 +106,12 @@ export default function Poker({isBrowser}) {
         }
 
         socket.emit("join-room", data);
+
+    }
+
+    const onJoinRoom = (room) => (e) => {
+
+        joinRoom(room)
 
     }
 
@@ -120,10 +123,23 @@ export default function Poker({isBrowser}) {
         }
 
         if(user){
+            // destroyCookie(null, 'xxxx')
             socket.emit("leave", user.room);
         }
         
         socket.emit("join-room", data);
+
+    }
+
+    const leaveRoom = (room) => (e) => {
+
+        if(user){
+
+            socket.emit("leave", room);
+
+            destroyCookie(null, 'pv-poker-user')
+            setUser(null)
+        }
 
     }
 
@@ -134,110 +150,52 @@ export default function Poker({isBrowser}) {
             <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <main className={styles.main}>
-
-        <h1 className={styles.title}> POC </h1>
-        
-        <br/>
-
         {
             (username == null) ? 
-              <AddUser onAddUser={addUser} />
+                <AddUser onAddUser={addUser} />
             : null
         }   
 
         {
             (username && user == null) ? 
-            <>
-                <button onClick={onCreateRoom}>Create a Room</button>
-
-                <br/>
-                    <p>or</p>
-                <br/>
-
-                <div>
-                    <h3>Join Rooms</h3>
-                    <ul>
-                    {rooms.map( room => (
-                        <li key={room} onClick={onJoinRoom(room)}>{room}</li>
-                    ))}
-                    </ul>
-                </div>
-            </> : null
+                <WelcomeUser rooms={rooms} username={username}  onCreateRoom={onCreateRoom}  onJoinRoom={onJoinRoom} />
+                : null
         }
 
         {
             (username && user) ? 
-            <>
-            <div className="row">
-              <div className="col-md-12 mt-4 mb-4">
-                <h1 className={styles.title}>
-                  Hello {username}
-                </h1>
-              </div>
-            </div>
-            <div className="col-md-8">
-                  <h6>Messages</h6>
-                  <div id="messages">
-                    {messages.map(({ user, date, text }, index) => (
-                      <div key={index} className="row mb-2">
-
-                        <div className="col-md-2">{user.name ? user.name : 'foo'}</div>
-                        <div className="col-md-2">{text}</div>
-
-                      </div>
-                    ))}
-                  </div>
-            </div>
-            <div>
-                <input
-                    type="text"
-                    onChange={e => setMessage(e.currentTarget.value)}
-                    value={message}
-                />
-                <button onClick={submit} className="btn btn-primary">
-                    Send
-                </button>
-            </div>
-            <div className="col-md-4">
-                <h6>Users</h6>
-                <ul>
-                  {users.map(({ name, id }) => (
-                    <li key={id}>{name}</li>
-                  ))}
-                </ul>
-            </div>
-
-            <div className="col-md-4">
-                <h6>Active Rooms</h6>
-                <ul>
-                  {rooms.map( room => (
-                    <li key={room} onClick={onLeaveThenJoinRoom(room)}>{room}</li>
-                  ))}
-                </ul>
-            </div>
-            </> : null
+                <PokerRoom 
+                    rooms={rooms} 
+                    messages={messages}  
+                    username={username}
+                    user={user}  
+                    users={users}  
+                    onMessage={onMessage}  
+                    leaveRoom={leaveRoom}  
+                    onLeaveThenJoinRoom={onLeaveThenJoinRoom} /> : null
         }
 
-        </main>
-
         <footer className={styles.footer}>
-            <span>
-            Powered by <strong>PV</strong>
-            </span>
+            <strong>PV-APPS</strong>
         </footer>
-
 
         </div>
     )
 }
 
 
-Poker.getInitialProps = ({ req }) => {
-    
-    const isServer = !!req
-    const isBrowser = !req
+const Button = styled.button`
+    background: white;
+    color: #0070f3;    
+    padding: 10px 20px;
+    border: 1px solid #0070f3;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
 
-    return { isBrowser: isBrowser }
-
-}
+    &:hover {
+        background: #0070f3;
+        color: white;
+    }
+`;

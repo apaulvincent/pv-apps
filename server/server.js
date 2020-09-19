@@ -16,7 +16,7 @@ if (dev) {
 
 const port = process.env.PORT || 9000
 
-let activeRooms = []
+let activeRooms = ['Public', 'Some Where']
 let activeUsers = {}
 
 io.on('connection', (socket) => {
