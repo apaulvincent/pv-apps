@@ -6,9 +6,9 @@
     "dev": "next dev -p 4080",
     "build": "next build",
     "io": "nodemon server/server.js",
-    "start": "next start -p 4081",
+    "start": "next start",
     "export": "next export -o build",
-    "heroku-postbuild": "npm run build"
+    "heroku-postbuild": "next build"
   },
   "dependencies": {
     "cors": "^2.8.5",
