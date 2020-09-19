@@ -9,9 +9,9 @@ import { parseCookies, setCookie, destroyCookie } from 'nookies'
 
 import styled from 'styled-components'
 
-import AddUser from './AddUser'
-import WelcomeUser from './WelcomeUser'
-import PokerRoom from './PokerRoom'
+import AddUser from '../../components/AddUser'
+import WelcomeUser from '../../components/WelcomeUser'
+import PokerRoom from '../../components/PokerRoom'
 
 import { v4 as uuidv4 } from 'uuid';
 
