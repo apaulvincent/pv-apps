@@ -1,32 +1,29 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import io from 'socket.io-client'
 
-import Head from 'next/head'
-import styles from '../../styles/Poker.module.scss'
-import Link from 'next/link'
-
-import { parseCookies, setCookie, destroyCookie } from 'nookies'
-
 import styled from 'styled-components'
+import { lighten, darken } from 'polished'
 
-import AddUser from '../../components/AddUser'
-import WelcomeUser from '../../components/WelcomeUser'
-import PokerRoom from '../../components/PokerRoom'
+import {getCookie, setCookie, deleteCookie} from '../utils/cookies'
+
+import AddUser from '../components/AddUser'
+import WelcomeUser from '../components/WelcomeUser'
+import PokerRoom from '../components/PokerRoom'
 
 import { v4 as uuidv4 } from 'uuid';
 
-const socket = io(process.env.IOPATH);
+const path = process.env.NODE_ENV !== 'production' ? `http://localhost:${process.env.REACT_APP_PORT}` : "https://pv-poker.herokuapp.com"
 
-export default function Poker() {
+const socket = io(path);
 
-    let userCookie = parseCookies()
-    let defaultUsername = 'null'
+const Poker = (props) => {
 
-    if(userCookie['pv-poker-user']){
-        userCookie = JSON.parse(userCookie['pv-poker-user'])
+    let userCookie = null
+    let defaultUsername = null
+
+    if(getCookie('pv-poker-user')){
+        userCookie = JSON.parse(getCookie('pv-poker-user'))
         defaultUsername = userCookie.name
-    } else {
-        userCookie = null
     }
 
     const [username, setUsername] = useState(defaultUsername);
@@ -36,6 +33,7 @@ export default function Poker() {
     const [rooms, setRooms] = useState([]);
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
+
 
     useEffect(() => {
 
@@ -49,7 +47,7 @@ export default function Poker() {
 
         socket.on("connected", user => { 
 
-            setCookie(null, 'pv-poker-user', JSON.stringify(user))
+            setCookie('pv-poker-user', JSON.stringify(user))
 
             setUser(user);
 
@@ -123,7 +121,7 @@ export default function Poker() {
         }
 
         if(user){
-            // destroyCookie(null, 'xxxx')
+            // deleteCookie('xxxx')
             socket.emit("leave", user.room);
         }
         
@@ -137,19 +135,15 @@ export default function Poker() {
 
             socket.emit("leave", room);
 
-            destroyCookie(null, 'pv-poker-user')
+            deleteCookie('pv-poker-user')
             setUser(null)
         }
 
     }
 
-    return (
-        <div className={styles.container}>
-        <Head>
-            <title>PV Poker</title>
-            <link rel="icon" href="/favicon.ico" />
-        </Head>
 
+    return (
+        <div>
         {
             (username == null) ? 
                 <AddUser onAddUser={addUser} />
@@ -175,13 +169,26 @@ export default function Poker() {
                     onLeaveThenJoinRoom={onLeaveThenJoinRoom} /> : null
         }
 
-        <footer className={styles.footer}>
+        <footer>
             <strong>PV-APPS</strong>
         </footer>
 
         </div>
     )
-}
+};
+
+export default Poker;
+
+
+
+const Wrapper = styled.div `
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+`;
 
 
 const Button = styled.button`

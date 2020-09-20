@@ -1,0 +1,271 @@
+
+// @mixin hidden
+@mixin hidden { display: none !important; visibility: hidden; }
+
+// @mixin invisible
+@mixin invisible { visibility: hidden; }
+
+// @mixin clearfix
+@mixin clearfix { 
+  &:before, &:after { content:" "; display:table; }
+  &:after { clear:both; }
+  & { *zoom:1; }
+}
+
+// Background Position
+@mixin bp($x, $y){ background-position:($x*-1)+px ($y*-1)+px; }
+
+//@mixin float()
+@mixin float($val:left){ float:$val; display:inline; }
+//@mixin absolute
+@mixin absolute($t:nil,$l:nil,$r:nil,$b:nil) { 
+  position:absolute;
+  @if $t != nil {  
+    top:$t;
+  }
+  @if $r != nil { 
+  right:$r;
+  }
+  @if $b != nil { 
+  bottom:$b;
+  }
+  @if $l != nil { 
+  left:$l;
+  }
+}
+
+//@mixin minHeight
+@mixin minHeight($n) { min-height:$n+px; height:auto !important; height:$n+px; }
+//@mixin font
+@mixin font($f:nil, $s:nil, $l:nil, $w:nil, $c:nil, $t:nil){
+  @if $f != nil { 
+    font-family:$f;
+  }
+  @if $s != nil {
+    font-size:$s;
+  }
+  @if $w != nil {
+    font-weight:$w;
+  }
+  @if $l != nil {
+    line-height:$l;
+  }
+  @if $c != nil {
+    color:$c;
+  }
+  @if $t != nil {
+    font-style:$t;
+  }
+}
+
+// Convert PX to EM usage : font-size: em(18px);
+@function em($px, $base: $base-font-size) {
+    @return ($px / $base) * 1em;
+}
+
+
+//@mixin gradient
+@mixin gradient($top, $bottom) {
+  background: $top; 
+  background-image: -moz-linear-gradient(top, $top 0%, $bottom 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$top), color-stop(100%,$bottom)); 
+  background-image: -webkit-linear-gradient(top, $top 0%,$bottom 100%); 
+  background-image: -o-linear-gradient(top, $top 0%,$bottom 100%);
+  background-image: -ms-linear-gradient(top, $top 0%,$bottom 100%); 
+  background-image: linear-gradient(to bottom, $top 0%,$bottom 100%); 
+}
+
+
+$default_rounded_amount: 5px;
+// Round corner at position by amount.
+@mixin round-corner($position, $amount: $default_rounded_amount){
+  border-#{$position}-radius: $amount;
+  -webkit-border-#{$position}-radius: $amount;
+}
+@mixin round-corner-mozilla($position, $amount: $default_rounded_amount){
+  -moz-border-radius-#{$position}: $amount;
+}
+// Round left corners by amount
+@mixin round-left-corners($amount: $default_rounded_amount){
+  @include round-corner("top-left", $amount);
+  @include round-corner("bottom-left", $amount);
+  @include round-corner-mozilla("topleft", $amount);
+  @include round-corner-mozilla("bottomleft", $amount);
+}
+// Round right corners by amount
+@mixin round-right-corners($amount: $default_rounded_amount){
+  @include round-corner("top-right", $amount);
+  @include round-corner("bottom-right", $amount);
+  @include round-corner-mozilla("topright", $amount);
+  @include round-corner-mozilla("bottomright", $amount);
+}
+// Round top corners by amount
+@mixin round-top-corners($amount: 5px){
+  @include round-corner("top-left", $amount);
+  @include round-corner("top-right", $amount);
+  @include round-corner-mozilla("topleft", $amount);
+  @include round-corner-mozilla("topright", $amount);
+}
+// Round bottom corners by amount
+@mixin round-bottom-corners($amount: $default_rounded_amount){
+  @include round-corner("bottom-left", $amount);
+  @include round-corner("bottom-right", $amount);
+  @include round-corner-mozilla("bottomleft", $amount);
+  @include round-corner-mozilla("bottomright", $amount);
+}
+// Round all corners by amount
+@mixin round-corners($amount: $default_rounded_amount){
+  border-radius: $amount;
+  -moz-border-radius: $amount;
+  -webkit-border-radius: $amount;
+}
+
+//mixin Box shadow
+
+@mixin box-shadow($val){
+  -webkit-box-shadow: $val;
+  -moz-box-shadow: $val;
+  box-shadow: $val;
+}
+
+@mixin transition($val){
+  -webkit-transition:$val;
+  -moz-transition:$val;
+  -o-transition:$val;
+  -ms-transition:$val;
+  transition:$val;
+}
+
+@mixin transform($val){
+  -webkit-transform:$val;
+  -moz-transform: $val;
+  -ms-transform: $val;
+  -o-transform: $val;
+  transform: $val;
+}
+
+//mixin opacity
+@mixin opacity($o){
+  opacity: $o;
+  filter:alpha(opacity=$o * 100);
+}
+
+
+@mixin uppercase{
+  text-transform: uppercase;
+}
+
+
+// Media Query
+@mixin respond($breakpoint) {
+    @media only screen and (max-width: $breakpoint + px) { @content; }
+}
+
+
+
+@mixin keyframes( $animationName ) {
+
+    @-webkit-keyframes $animationName {
+        @content;
+    }
+
+    @-moz-keyframes $animationName {
+        @content;
+    }
+
+    @-o-keyframes $animationName {
+        @content;
+    }
+
+    @keyframes $animationName {
+        @content;
+    }
+}
+
+
+ @-webkit-keyframes glideUp {
+
+    0%   {
+      @include opacity(0);
+      @include transform(translateY(40px));
+    }
+    100% {
+      @include transform(translateY(0));
+      @include opacity(1);
+    }
+}
+
+ @-webkit-keyframes glideRight {
+
+    0%   {
+      @include opacity(0);
+      @include transform(translateX(-40px));
+    }
+
+    100% {
+      @include transform(translateX(0));
+      @include opacity(1);
+    }
+}
+
+
+
+ @-moz-keyframes glideUp {
+
+    0%   {
+      @include opacity(0);
+      @include transform(translateY(40px));
+    }
+    100% {
+      @include transform(translateY(0));
+      @include opacity(1);
+    }
+}
+
+ @-moz-keyframes glideRight {
+
+    0%   {
+      @include opacity(0);
+      @include transform(translateX(-40px));
+    }
+
+    100% {
+      @include transform(translateX(0));
+      @include opacity(1);
+    }
+}
+
+ @keyframes glideUp {
+
+    0%   {
+      @include opacity(0);
+      @include transform(translateY(40px));
+    }
+    100% {
+      @include transform(translateY(0));
+      @include opacity(1);
+    }
+}
+
+ @keyframes glideRight {
+
+    0%   {
+      @include opacity(0);
+      @include transform(translateX(-40px));
+    }
+
+    100% {
+      @include transform(translateX(0));
+      @include opacity(1);
+    }
+}
+
+
+
+// TIMING : linear|ease|ease-in|ease-out|ease-in-out|
+@mixin anim($keyframe, $duration, $timing, $delay, $iteration){
+  -webkit-animation: $keyframe $duration $timing $delay $iteration forwards;
+  -moz-animation:    $keyframe $duration $timing $delay $iteration forwards;
+  -o-animation:      $keyframe $duration $timing $delay $iteration forwards;
+  animation:         $keyframe $duration $timing $delay $iteration forwards;
+}

@@ -14,6 +14,7 @@ if (dev) {
   require('dotenv').config();
 }
 
+// PORT is inportant for Heroku
 const port = process.env.PORT || 9000
 
 let activeRooms = ['Public', 'Some Where']

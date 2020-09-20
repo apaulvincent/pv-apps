@@ -1,0 +1,53 @@
+// FONT PATHS
+$font-path: '/assets/fonts/';
+
+@font-face {
+    font-family: 'RobotoLight';
+    src: url('#{$font-path}RobotoLight.eot');
+    src: url('#{$font-path}RobotoLight.eot') format('embedded-opentype'),
+         url('#{$font-path}RobotoLight.woff2') format('woff2'),
+         url('#{$font-path}RobotoLight.woff') format('woff'),
+         url('#{$font-path}RobotoLight.ttf') format('truetype'),
+         url('#{$font-path}RobotoLight.svg#RobotoLight') format('svg');
+}
+
+@font-face {
+    font-family: 'RobotoLightItalic';
+    src: url('#{$font-path}RobotoLightItalic.eot');
+    src: url('#{$font-path}RobotoLightItalic.eot') format('embedded-opentype'),
+         url('#{$font-path}RobotoLightItalic.woff2') format('woff2'),
+         url('#{$font-path}RobotoLightItalic.woff') format('woff'),
+         url('#{$font-path}RobotoLightItalic.ttf') format('truetype'),
+         url('#{$font-path}RobotoLightItalic.svg#RobotoLightItalic') format('svg');
+}
+
+
+@font-face {
+    font-family: 'RobotoRegular';
+    src: url('#{$font-path}RobotoRegular.eot');
+    src: url('#{$font-path}RobotoRegular.eot') format('embedded-opentype'),
+         url('#{$font-path}RobotoRegular.woff2') format('woff2'),
+         url('#{$font-path}RobotoRegular.woff') format('woff'),
+         url('#{$font-path}RobotoRegular.ttf') format('truetype'),
+         url('#{$font-path}RobotoRegular.svg#RobotoRegular') format('svg');
+}
+
+@font-face {
+    font-family: 'RobotoItalic';
+    src: url('#{$font-path}RobotoItalic.eot');
+    src: url('#{$font-path}RobotoItalic.eot') format('embedded-opentype'),
+         url('#{$font-path}RobotoItalic.woff2') format('woff2'),
+         url('#{$font-path}RobotoItalic.woff') format('woff'),
+         url('#{$font-path}RobotoItalic.ttf') format('truetype'),
+         url('#{$font-path}RobotoItalic.svg#RobotoItalic') format('svg');
+}
+
+@font-face {
+    font-family: 'RobotoMedium';
+    src: url('#{$font-path}RobotoMedium.eot');
+    src: url('#{$font-path}RobotoMedium.eot') format('embedded-opentype'),
+         url('#{$font-path}RobotoMedium.woff2') format('woff2'),
+         url('#{$font-path}RobotoMedium.woff') format('woff'),
+         url('#{$font-path}RobotoMedium.ttf') format('truetype'),
+         url('#{$font-path}RobotoMedium.svg#RobotoMedium') format('svg');
+}
