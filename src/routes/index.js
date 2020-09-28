@@ -12,6 +12,8 @@ const Routes = () => {
 
             <Route exact path='/' component={Home} />
             <Route exact path='/poker' component={Poker} />
+            <Route exact path='/poker/:roomid' component={Poker} />
+            <Route exact path='/im-good' component={Poker} />
             <Route path="*" component={Error404} />
 
         </Switch>

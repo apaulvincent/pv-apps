@@ -1,21 +1,57 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
 
-export default function AddUser(props) {
+import {
+    useHistory,
+    Link,
+    useParams
+  } from "react-router-dom";
 
-    const [username, setUsername] = useState('');
+import {PokerContext} from '../store'
+
+export default function AddUser(props) {
+    
+    let { roomid } = useParams();
+
+    const [{
+        socket,
+        username,
+    }, dispatch] = useContext(PokerContext)
+
+    const [user, setUsername] = useState('');
 
   
     const addUsername = e => {
 
         e.preventDefault();
 
-        if(username == '') return;
-        
-        props.onAddUser(username);
+        if(user == '') return;
+
+        if(roomid) {
+
+            let data = {
+                username: user,
+                room: roomid,
+            }
+    
+            socket.emit("join-room", data);
+
+        } else {
+
+            socket.emit("set-username")
+        }
+
+        dispatch({type: 'SET_USERNAME', payload: user});
 
     };
-  
+
+    const handleKeyDown = (e) => {
+
+        if (e.key === 'Enter') {
+            addUsername(e)
+        }
+    }
+
     return (
       <Wrapper>
 
@@ -25,8 +61,9 @@ export default function AddUser(props) {
             <input
                 type="text"
                 onChange={e => {setUsername(e.currentTarget.value)}}
+                onKeyDown={handleKeyDown}
                 placeholder="Your name please?"
-                value={username}
+                value={user}
             />
             <Button onClick={addUsername}>
                 Go

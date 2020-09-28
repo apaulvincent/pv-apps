@@ -2,36 +2,55 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 
 export default function WelcomeUser(props) {
-
   
-    const addUsername = e => {
-
+    const [roomname, setRoomName] = useState('');
+  
+    const handleCreateRoom = e => {
         e.preventDefault();
-
+        if(roomname == '') return;
+        props.onCreateRoom(roomname)
     };
-  
+
+    const handleKeyDown = (e) => {
+
+        if (e.key === 'Enter') {
+            handleCreateRoom(e)
+        }
+    }
+
     return (
       <Wrapper>
 
-        <Title> Hello {props.username}!</Title>
-        
-        <Button onClick={props.onCreateRoom}>Create Room</Button>
+            <Title>Hello {props.username}!</Title>
+            
+            <FormWrap>
+                <input
+                    type="text"
+                    onChange={e => {setRoomName(e.currentTarget.value)}}
+                    placeholder="Room name?"
+                    onKeyDown={handleKeyDown}
+                    value={roomname}
+                />
+                <Button onClick={handleCreateRoom}>
+                    Create
+                </Button>
+            </FormWrap>
 
-        {
-            props.rooms.length > 0 ? 
-            <RoomListing>
+            {
+                props.rooms.length > 0 ? 
+                <RoomListing>
 
-                <span className="or">or</span>
+                    <span className="or">or</span>
 
-                <h3>Join a Room</h3>
+                    <h3>Join a Room</h3>
 
-                <ul>
-                    {props.rooms.map( room => (
-                        <li key={room} onClick={props.onJoinRoom(room)}>{room}</li>
-                    ))}
-                </ul>
-            </RoomListing> : null
-        }
+                    <ul>
+                        {props.rooms.map( room => (
+                            <li key={room.id} onClick={props.onJoinRoom(room)}>{room.name}</li>
+                        ))}
+                    </ul>
+                </RoomListing> : null
+            }
 
       </Wrapper>
     )
@@ -56,6 +75,21 @@ const Title = styled.h1`
     line-height: 1.15;
     font-size: 4rem;
 `;  
+
+
+const FormWrap = styled.div`
+    padding: 5px;
+    border: 1px solid #eee;
+    border-radius: 3px;
+    cursor: pointer;
+
+    input {
+        border: none;
+        padding: 10px;
+        outline: none;
+        font-size: 18px;
+    }
+`;
 
 const Button = styled.button`
     background: white;

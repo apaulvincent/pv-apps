@@ -29,7 +29,7 @@
     "start": "cross-env PORT=4000 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "io": "nodemon server/server.js",
+    "io": "node server/server.js",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

@@ -3,27 +3,39 @@ import styled from 'styled-components'
 import { lighten, darken } from 'polished'
 import { NavLink, useHistory, useRouteMatch } from 'react-router-dom'
 
+import Layout from './Layout'
+
+
 const Home = (props) => {
     return (
-        <Wrapper>
-            <div>
-                <h2>Home</h2>
-                <p><NavLink to={`/poker/`}>Poker</NavLink></p>
-                <p><NavLink to={`/im-good/`}>I'm Good</NavLink></p>
-            </div>
-        </Wrapper>     
+        <Layout type="basic">
+
+            <Wrapper>
+
+            <Title>Mini Apps</Title>
+
+                <ul>
+                    <li><NavLink to={`/poker/`}>Poker</NavLink></li>
+                    <li><NavLink to={`/im-good/`}>I'm Good</NavLink></li>
+                </ul>
+
+            </Wrapper>
+
+        </Layout>     
     );
 };
 
 export default Home;
 
-
-
-const Wrapper = styled.div `
+const Wrapper = styled.div`
     display: flex;
-    align-items: center;
-    text-align: center;
+    flex-direction: column;
     justify-content: center;
-    width: 100%;
-    height: 100%;
+    align-items: center;
 `;
+
+const Title = styled.h1`
+    margin: 0 0 0.4em;
+    line-height: 1.15;
+    font-size: 4rem;
+`;  

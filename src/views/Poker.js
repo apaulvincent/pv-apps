@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from 'react'
-import io from 'socket.io-client'
+import React, { useState, useEffect, useContext } from 'react'
+
+import {PokerContextProvider, PokerContext} from '../store'
+
+import {
+    useHistory,
+    Link,
+    useParams
+  } from "react-router-dom";
 
 import styled from 'styled-components'
 import { lighten, darken } from 'polished'
 
 import {getCookie, setCookie, deleteCookie} from '../utils/cookies'
+
+import Layout from './Layout'
 
 import AddUser from '../components/AddUser'
 import WelcomeUser from '../components/WelcomeUser'
@@ -12,34 +21,49 @@ import PokerRoom from '../components/PokerRoom'
 
 import { v4 as uuidv4 } from 'uuid';
 
-const path = process.env.NODE_ENV !== 'production' ? `http://localhost:${process.env.REACT_APP_PORT}` : "https://pv-poker.herokuapp.com"
+const Index = (props) => {
 
-const socket = io(path);
+    const [{
+        socket,
+        username,
+        user,
+        users,
+        rooms,
+        messages,
+    }, dispatch] = useContext(PokerContext)
 
-const Poker = (props) => {
-
-    let userCookie = null
-    let defaultUsername = null
-
-    if(getCookie('pv-poker-user')){
-        userCookie = JSON.parse(getCookie('pv-poker-user'))
-        defaultUsername = userCookie.name
-    }
-
-    const [username, setUsername] = useState(defaultUsername);
-    const [user, setUser] = useState(userCookie);
-
-    const [users, setUsers] = useState([]);
-    const [rooms, setRooms] = useState([]);
-    const [message, setMessage] = useState("");
-    const [messages, setMessages] = useState([]);
-
+    let history = useHistory();
+    let { roomid } = useParams();
 
     useEffect(() => {
 
-        if(userCookie){
-            joinRoom(userCookie.room)
+        if(roomid){
+            socket.emit("check-roomid", roomid);
         }
+
+        socket.on("roomid-exists", (found) => {
+
+            if(found) {
+
+                if(user && roomid == user.room){
+                
+                    joinRoom(user.room)
+                
+                }
+
+            } else {
+                
+                // Reset if room is not registered.
+
+                dispatch({type: 'SET_USERNAME', payload: null})
+                dispatch({type: 'SET_USER', payload: null})
+
+                deleteCookie('pv-poker-user')
+                history.push(`/poker`)
+
+            }
+
+        });
 
         socket.on("connect", () => {
             // Do somthing on connect
@@ -47,28 +71,38 @@ const Poker = (props) => {
 
         socket.on("connected", user => { 
 
-            setCookie('pv-poker-user', JSON.stringify(user))
+            console.log('connected')
 
-            setUser(user);
+            setCookie('pv-poker-user', JSON.stringify(user))
+            
+            dispatch({type: 'SET_USER', payload: user})
+            
+            history.push(`/poker/${user.room}`)
 
         });
 
         socket.on("users", users => {
-            setUsers(users);
+            dispatch({type: 'SET_USERS', payload: users});
+        });
+
+        socket.on("users", users => {
+            dispatch({type: 'SET_USERS', payload: users});
+        });
+
+        socket.on("update-user", (user) => {
+            dispatch({type: 'UPDATE_USER', payload: user});
         });
 
         socket.on("show-rooms", rooms => {
-            setRooms(rooms);
+            dispatch({type: 'SET_ROOMS', payload: rooms});
         });
 
         socket.on("message", message => {
-            setMessages(messages => [...messages, message]);
+            dispatch({type: 'SET_MESSAGES', payload: message});
         });
     
         socket.on("disconnected", id => {
-            setUsers(users => {
-                return users.filter(user => user.id !== id);
-            });
+            dispatch({type: 'DELETE_USER', payload: id});
         });
 
 
@@ -77,19 +111,16 @@ const Poker = (props) => {
     const onMessage = (msg) => {
         socket.emit("send", msg);
     };
-  
-    const addUser = (user) => {
-        setUsername(user);
-    };
 
 
-    const onCreateRoom = (e) => {
+    const onCreateRoom = (name) => {
 
         let room = uuidv4()
         
         let data = {
-            username: username,
-            room: room,
+            name: name,
+            id: room,
+            users: [username]
         }
 
         socket.emit("create-room", data);
@@ -108,9 +139,7 @@ const Poker = (props) => {
     }
 
     const onJoinRoom = (room) => (e) => {
-
-        joinRoom(room)
-
+        joinRoom(room.id)
     }
 
     const onLeaveThenJoinRoom = (room) => (e) => {
@@ -123,6 +152,7 @@ const Poker = (props) => {
         if(user){
             // deleteCookie('xxxx')
             socket.emit("leave", user.room);
+            // dispatch({type: 'SET_MESSAGES', payload: []});
         }
         
         socket.emit("join-room", data);
@@ -131,54 +161,55 @@ const Poker = (props) => {
 
     const leaveRoom = (room) => (e) => {
 
-        if(user){
+        deleteCookie('pv-poker-user')
+        
+        socket.emit("leave", room);
 
-            socket.emit("leave", room);
+        dispatch({type: 'SET_USER', payload: null})
+        // dispatch({type: 'SET_MESSAGES', payload: []});
 
-            deleteCookie('pv-poker-user')
-            setUser(null)
-        }
-
+        history.push(`/poker`)
     }
 
-
     return (
-        <div>
+        <Layout type="basic">
         {
             (username == null) ? 
-                <AddUser onAddUser={addUser} />
+                <AddUser />
             : null
-        }   
+        }
 
         {
             (username && user == null) ? 
-                <WelcomeUser rooms={rooms} username={username}  onCreateRoom={onCreateRoom}  onJoinRoom={onJoinRoom} />
+                <WelcomeUser 
+                    rooms={rooms} 
+                    username={username}  
+                    onCreateRoom={onCreateRoom}  
+                    onJoinRoom={onJoinRoom} />
                 : null
         }
 
         {
             (username && user) ? 
                 <PokerRoom 
-                    rooms={rooms} 
-                    messages={messages}  
-                    username={username}
-                    user={user}  
-                    users={users}  
                     onMessage={onMessage}  
                     leaveRoom={leaveRoom}  
-                    onLeaveThenJoinRoom={onLeaveThenJoinRoom} /> : null
+                    onLeaveThenJoinRoom={onLeaveThenJoinRoom} /> 
+                : null
         }
-
-        <footer>
-            <strong>PV-APPS</strong>
-        </footer>
-
-        </div>
+        </Layout>
     )
 };
 
-export default Poker;
+function Poker() {
+    return (
+        <PokerContextProvider>
+            <Index/>
+        </PokerContextProvider>
+    );
+}
 
+export default Poker;
 
 
 const Wrapper = styled.div `
