@@ -98,7 +98,7 @@ export default function PokerRoom(props) {
                             </UserListHead>
                             <ul>
                                 {
-                                    moderator ? <li>{moderator.name}</li> : 
+                                    moderator ? <li><span className="name">{moderator.name}</span></li> : 
                                                 <li><NoPlayer>Hey! we need someone here</NoPlayer></li>
                                 }
                             </ul>
@@ -125,7 +125,7 @@ export default function PokerRoom(props) {
                             </UserListHead>
                             <ul>
                             {users.map(({ name, role, id }) => (
-                                role == 2 ? <li key={id}>{name}</li> : null
+                                role == 2 ? <li key={id}><span className="name">{name}</span></li> : null
                             ))}
                             </ul>
                         </UserList>
