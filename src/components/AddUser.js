@@ -7,7 +7,11 @@ import {
     useParams
   } from "react-router-dom";
 
+import Pills from './Pills'
+
 import {PokerContext} from '../store'
+
+let users = ['Vianca', 'Joy', 'Dave', 'Paul', 'Paolo', 'Ralph', 'Karl']
 
 export default function AddUser(props) {
     
@@ -19,6 +23,7 @@ export default function AddUser(props) {
     }, dispatch] = useContext(PokerContext)
 
     const [user, setUsername] = useState('');
+    const [defaultUsers, setDefaultUsers] = useState(users);
 
   
     const addUsername = e => {
@@ -52,6 +57,25 @@ export default function AddUser(props) {
         }
     }
 
+    const handleSelect = (item) => {
+
+        if(roomid) {
+
+            let data = {
+                username: item,
+                room: roomid,
+            }
+    
+            socket.emit("join-room", data);
+
+        } else {
+
+            socket.emit("set-username")
+        }
+
+        dispatch({type: 'SET_USERNAME', payload: item});
+    }
+
     return (
       <Wrapper>
 
@@ -68,8 +92,10 @@ export default function AddUser(props) {
             <Button onClick={addUsername}>
                 Go
             </Button>
+
         </FormWrap>
 
+        <Pills items={defaultUsers} onSelect={handleSelect}/>
 
       </Wrapper>
     )
@@ -113,6 +139,7 @@ const FormWrap = styled.div`
     border: 1px solid #eee;
     border-radius: 3px;
     cursor: pointer;
+    margin: 0 0 30px;
 
     input {
         border: none;

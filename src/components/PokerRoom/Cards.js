@@ -38,13 +38,13 @@ export default function Cards(props) {
         <Deck>
             {
                 cards.map(card => (
-                    <Button 
+                    <Card 
                         key={card} 
                         selected={(selected == card)} 
                         disabled={ !isPlaying || selected != null || isDisabled } 
                         onClick={handleSelect(card)}>
                     {card}
-                    </Button>
+                    </Card>
                 ))
             }
         </Deck>
@@ -64,39 +64,39 @@ Cards.defaultProps = {
     onSelect: () => {},
 }
 
-
-
-
 const Wrapper = styled.div`
     padding: 15px;
 `;
 
 const Deck = styled.div`
-    display: grid;
-    grid-gap: 15px;
-    grid-template-columns:  repeat(auto-fit, minmax(100px, 1fr));
+    display: block;
+    width: 100%;
+    max-width: 780px;
+    margin: auto;
+    text-align: center;
 `;
 
-const Button = styled.button`
-    height: 140px;
-    border: 1px solid red;
-    cursor: pointer;
-    font-size: 3rem;
-    display: flex;
+const Card = styled.button`
+    display: inline-flex;
     justify-content: center;
     align-items: center;
+
+    width: 100px;
+    height: 140px;
+    border: 1px solid #0070f3;
+    cursor: pointer;
+    font-size: 2.6rem;
     border-radius: 6px;
     background: #fff;
+    margin: 10px;
     // outline: none;
 
     &:disabled {
         cursor: not-allowed;
         color: ${(props) => props.selected ? 'inherit' : '#ccc'};
-        border: ${(props) => props.selected ? '1px solid red' : '1px solid #eee'};
+        border: ${(props) => props.selected ? '1px solid #0070f3' : '1px solid #eee'};
     }
 `;
-
-
 
 const Controls = styled.div`
     display: flex;

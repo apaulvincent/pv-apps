@@ -25,6 +25,8 @@ let activeRooms = [{
 
 let activeUsers = {}
 
+const defaultRole = 1;
+
 io.on('connection', (socket) => {
 
       console.log('a user connected');
@@ -51,7 +53,7 @@ io.on('connection', (socket) => {
             "name": data.users[0],
             "id": socket.id,
             "room": data.id,
-            "role": 1
+            "role": defaultRole
           };
 
           data.users = [socket.id]
@@ -89,7 +91,7 @@ io.on('connection', (socket) => {
             "name": data.username,
             "id": socket.id,
             "room": data.room,
-            "role": 1
+            "role": defaultRole
           };
 
           activeUsers[socket.id] = user;

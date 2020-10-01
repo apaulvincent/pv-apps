@@ -28,3 +28,43 @@ a {
 }
 
 
+.mini-card-wrap {
+  position: relative;
+  width: 20px;
+  height: 28px;
+
+  .front{
+    position: absolute;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 28px;
+    font-size: 9px;
+    text-indent: -2px;
+    border-radius: 2px;
+    border: 1px solid #0070f3;
+    color: #fff;
+    background: #0070f3;
+  }
+
+  .back {
+    position: absolute;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 28px;
+    font-size: 9px;
+    text-indent: -2px;
+    border-radius: 2px;
+    border: 1px solid #0070f3;
+    color: #0070f3;
+    background: #fff;
+  }
+
+
+
+}

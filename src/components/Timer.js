@@ -75,18 +75,17 @@ export default function Timer(props) {
         <div>
             {
                 !isPlaying && time != 0  ? 
-                <button onClick={start}>Start</button> : null
+                <StartButton onClick={start}>Start</StartButton> : null
             }
             {
                 time == 0 && !isPlaying ? 
-                <button  onClick={reset}>Reset</button> : null
+                <ResetButton  onClick={reset}>Reset</ResetButton> : null
             }
         </div>
     )
 
     return (
       <Wrapper>
-
         <h1>
             {
                 // !isPlaying ? props.time :
@@ -94,13 +93,13 @@ export default function Timer(props) {
                 time == (defaultTime - 1) ? 'Go!' : time
             }
         </h1>
-
+        <BtnWrap>
             {
                 (user.role == 0) ? 
                 controllers()
                 : null
             }
-
+        </BtnWrap>
       </Wrapper>
     )
 }
@@ -114,4 +113,53 @@ const Wrapper = styled.div`
     justify-content: center;
     flex-direction: column;
     align-items: center;
+
+    h1 {
+        font-size: 40px;
+    }
+`;
+
+const BtnWrap = styled.div`
+    height: 100px;
+`;
+
+
+const StartButton = styled.button`
+    background: white;
+    color: #0070f3;
+    padding: 0;
+    border: 1px solid #0070f3;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    width: 100px;
+    height: 100px;
+    border-radius: 100px;
+    outline: none;
+
+    &:hover {
+        background: #0070f3;
+        color: white;
+    }
+`;
+
+const ResetButton = styled.button`
+    background: white;
+    color: #0070f3;
+    padding: 0;
+    border: 1px solid #0070f3;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    width: 100px;
+    height: 100px;
+    border-radius: 100px;
+    outline: none;
+
+    &:hover {
+        background: #0070f3;
+        color: white;
+    }
 `;

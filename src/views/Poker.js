@@ -108,11 +108,6 @@ const Index = (props) => {
 
     }, []);
 
-    const onMessage = (msg) => {
-        socket.emit("send", msg);
-    };
-
-
     const onCreateRoom = (name) => {
 
         let room = uuidv4()
@@ -192,7 +187,6 @@ const Index = (props) => {
         {
             (username && user) ? 
                 <PokerRoom 
-                    onMessage={onMessage}  
                     leaveRoom={leaveRoom}  
                     onLeaveThenJoinRoom={onLeaveThenJoinRoom} /> 
                 : null
