@@ -1,4 +1,5 @@
 import React, {useState, useContext} from 'react';
+import { NavLink, useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 
 const BasicLayout = ({children}) => {
@@ -8,7 +9,7 @@ const BasicLayout = ({children}) => {
             {children}
             <Footer>
                 <span>
-                    PV-APPS
+                    <NavLink to={`/`}>PV-APPS</NavLink>
                 </span>
             </Footer>
         </Wrapper>

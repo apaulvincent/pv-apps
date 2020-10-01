@@ -4,6 +4,7 @@ import {Route, Switch, Redirect, withRouter} from 'react-router-dom'
 
 import Home from '../views/Home'
 import Poker from '../views/Poker'
+import Roulette from '../views/Roulette'
 import Error404 from '../views/Error404'
 
 const Routes = () => {
@@ -13,6 +14,7 @@ const Routes = () => {
             <Route exact path='/' component={Home} />
             <Route exact path='/poker' component={Poker} />
             <Route exact path='/poker/:roomid' component={Poker} />
+            <Route exact path='/roulette' component={Roulette} />
             <Route exact path='/im-good' component={Poker} />
             <Route path="*" component={Error404} />
 
