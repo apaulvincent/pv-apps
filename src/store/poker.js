@@ -6,16 +6,13 @@ import { useParams } from "react-router-dom";
 
 export const PokerContext = createContext();
 
-const path = process.env.NODE_ENV !== 'production' ? `http://localhost:${process.env.REACT_APP_PORT}` : "https://pv-poker.herokuapp.com"
-const socket = io(path);
-
 const initialState = {
     username: null,
     user: null,
     users: [],
     rooms: [],
     messages: [],
-    socket: socket,
+    socket: null,
     isPlaying: false
 }
 
@@ -88,7 +85,12 @@ let init = false;
 
 const PokerContextProvider = ({children}) => {
 
+    const path = process.env.NODE_ENV !== 'production' ? `http://localhost:${process.env.REACT_APP_PORT}` : "https://pv-poker.herokuapp.com"
+    const socket = io(path);
+
     let { roomid } = useParams();
+
+    initialState.socket = socket
 
     // Trigger only once...
     if(!init && getCookie('pv-poker-user') && roomid){

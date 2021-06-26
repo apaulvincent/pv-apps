@@ -15,6 +15,7 @@ const Home = (props) => {
 
                 <Pills>
                     <li className="pill"><NavLink to={`/poker/`}>Poker</NavLink></li>
+                    {/* <li className="pill"><NavLink to={`/poker-fire`}>Poker Fire</NavLink></li> */}
                     <li className="pill"><NavLink to={`/roulette`}>Roulette</NavLink></li>
                     {/* <li><NavLink to={`/im-good/`}>I'm Good</NavLink></li> */}
                 </Pills>
