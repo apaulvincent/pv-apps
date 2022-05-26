@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 
-import './Roulette/roulette.scss';
+import './copy.scss';
 
 
 import { FiX, FiArrowLeft, FiPlus, FiArrowRight, FiRotateCcw, FiSave } from "react-icons/fi";
@@ -14,18 +14,21 @@ import {
 import styled from 'styled-components'
 import { lighten, darken } from 'polished'
 
-import {getCookie, setCookie, deleteCookie} from '../utils/cookies'
+import {getCookie, setCookie, deleteCookie} from '../../utils/cookies'
 
-import Layout from './Layout'
+import Layout from '../Layout'
 
+// deleteCookie('pvCopyPaste')
 
 let pvCopyPaste = getCookie('pvCopyPaste');
-let pvCopyPasteItems = pvCopyPaste ? pvCopyPaste.split('|') : []
+let pvCopyPasteItems = pvCopyPaste ? JSON.parse(pvCopyPaste) : []
 
+let maxAge = (24 * 60 * 60 * 1000) * 324 // 24 hours
 
 const CopyPaste = (props) => {
 
     const [items, setItems] = useState(pvCopyPasteItems);
+    const [type, setType] = useState('')
     const [text, setText] = useState('')
     const [copyText, setCopyText] = useState('')
 
@@ -36,25 +39,39 @@ const CopyPaste = (props) => {
     const handleAdd = () => {
 
         if( text.length < 1 ) return;
+        if( type.length < 1 ) return;
         if( items.length > 20 ) return;
+
+        let newItem = {
+            type: type.trim(),    
+            text: text.trim()
+        }
     
         let newItems = [
           ...items,
-          text.trim()
+          newItem
         ];
-        setCookie('pvCopyPaste', newItems.join('|') )
+
+        setCookie('pvCopyPaste', JSON.stringify(newItems), {secure: true, 'max-age': maxAge})
+
         setItems(newItems)
         setText('')
+        setType('')
+
     }
 
     const handleDelete = (index) => (e) => {
         let newItems = items.filter((item, i) => index != i)
-        setCookie('pvCopyPaste', newItems.join('|') )
+        setCookie('pvCopyPaste', JSON.stringify(newItems), {secure: true, 'max-age': maxAge})
         setItems(newItems)
     }
     
-    const handleOddChange = (e) => {
+    const handleChangeText = (e) => {
         setText(e.target.value)
+    }
+    
+    const handleChangeType = (e) => {
+        setType(e.target.value)
     }
     
     const handleKeyPress = (e) => {
@@ -67,10 +84,11 @@ const CopyPaste = (props) => {
         return items.map( (item, index) => {
           return(
             <li key={index} onClick={() => {
-                navigator.clipboard.writeText(item)
-                setCopyText(item)
+                navigator.clipboard.writeText(item.text)
+                setCopyText(item.text)
             }} > 
-                <span>{item}</span>
+                <span>{item.type}</span>
+                <span>{item.text}</span>
                 <button onClick={handleDelete(index)}><FiX /></button>
             </li>
           )
@@ -84,37 +102,34 @@ const CopyPaste = (props) => {
 
             <div className="wrapper">
 
-<div className="controls">
+                <div className="copy-controls">
 
-    <h2 className="item-controls">
-      <span>Copy / Paste</span>
-    </h2>
+                    <h2 className="item-controls">
+                    <span>Copy / Paste</span>
+                    </h2>
 
-    <ul className="odds">
+                    <ul className="odds">
 
-        {
-        renderList()
-        }
-        <li> 
-            <input onChange={handleOddChange} onKeyDown={handleKeyPress} value={text} placeholder="New Item" maxLength="12" />
-            <button onClick={handleAdd}><FiPlus/></button> 
-        </li>
-    </ul>
-
-
-</div>
-
-<div className="roulette">
-
-{copyText}
-</div>
-
-</div>
+                        {
+                        renderList()
+                        }
+                        <li className='item-input'> 
+                            <input onChange={handleChangeType} onKeyDown={handleKeyPress} value={type} placeholder=":Type" maxLength="40" />
+                            <div className='separator'></div>
+                            <input onChange={handleChangeText} onKeyDown={handleKeyPress} value={text} placeholder=":Text" maxLength="40" />
+                            <button onClick={handleAdd}><FiPlus/></button> 
+                        </li>
+                    </ul>
 
 
+                </div>
 
+                <div className="roulette">
 
+                {copyText}
+                </div>
 
+            </div>
 
         </Layout>
     )
