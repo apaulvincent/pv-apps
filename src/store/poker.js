@@ -6,7 +6,8 @@ import { useParams } from "react-router-dom";
 
 export const PokerContext = createContext();
 
-const path = process.env.NODE_ENV !== 'production' ? `http://localhost:${process.env.REACT_APP_PORT}` : "https://pv-poker.herokuapp.com"
+// const path = process.env.NODE_ENV !== 'production' ? `http://localhost:${process.env.REACT_APP_PORT}` : "https://pv-poker.herokuapp.com"
+const path = process.env.NODE_ENV !== 'production' ? `http://localhost:${process.env.REACT_APP_PORT}` : "https://pv-apps.adaptable.app/"
 const socket = io(path);
 
 const initialState = {
