@@ -27,6 +27,11 @@ let activeUsers = {}
 
 const defaultRole = 1;
 
+
+io.get('/', (req, res) => {
+  res.send('<h1>PV Apps</h1>');
+});
+
 io.on('connection', (socket) => {
 
       console.log('a user connected');
@@ -226,9 +231,11 @@ io.on('connection', (socket) => {
 
 
       // Disconnection
-      socket.on('disconnect', () => {
+      socket.on('disconnect', (reason) => {
 
         const user = activeUsers[socket.id]
+        
+        console.log(reason); 
 
         if(user){
 
